@@ -18,6 +18,15 @@ class UsuarioController extends Controller
         return response()->json(Usuario::all());
     }
 
+  /* public function index()
+    {
+        $usuarios = Usuario::all();
+        return response()->json([
+            'message' => 'Lista de usuarios obtenida correctamente',
+            'data' => $usuarios
+        ], 200);
+    }*/    
+
     /**
      * Show the form for creating a new resource.
      */
