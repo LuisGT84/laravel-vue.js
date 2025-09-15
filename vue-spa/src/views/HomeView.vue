@@ -41,8 +41,8 @@
       <v-col cols="12" md="9">
         <v-card class="pa-4">
           <div class="text-h6 mb-4">Usuarios</div>
-          <!-- Componente que pinta la tabla -->
-          <UsersList :search-term="search" />
+          <!-- ✅ Ahora la lista sabe si puede mostrar acciones de edición -->
+          <UsersList :search-term="search" :is-admin="isAdmin" />
         </v-card>
       </v-col>
     </v-row>

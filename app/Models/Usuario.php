@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Para login con Auth
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Tarea; //  modelo Tarea
 
 class Usuario extends Authenticatable
 {
@@ -13,6 +14,7 @@ class Usuario extends Authenticatable
 
     protected $table = 'usuarios'; // Nombre exacto de la tabla
 
+    // Campos que se pueden asignar en masa (create/update)
     protected $fillable = [
         'nombre',
         'email',
@@ -24,4 +26,11 @@ class Usuario extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    // Relación uno a muchos: un usuario tiene muchas tareas
+    public function tareas()
+    {
+        return $this->hasMany(Tarea::class, 'usuario_id');
+    }
 }
+
