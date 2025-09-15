@@ -25,6 +25,10 @@
             class="mb-4"
           />
 
+          <v-btn block color="secondary" class="mb-3" @click="router.push('/tareas')">
+            Ver tareas
+          </v-btn>
+
           <v-btn block color="error" variant="tonal" @click="logout">
             Cerrar sesión
           </v-btn>

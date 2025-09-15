@@ -28,9 +28,10 @@ class Usuario extends Authenticatable
     ];
 
     // Relación uno a muchos: un usuario tiene muchas tareas
-    public function tareas()
+    public function tareas(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(Tarea::class, 'usuario_id');
+        return $this->hasMany(\App\Models\Tarea::class, 'usuario_id');
     }
+
 }
 
