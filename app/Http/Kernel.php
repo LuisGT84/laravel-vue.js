@@ -65,4 +65,11 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
+
+    // ...
+    protected $routeMiddleware = [
+    // ...
+    'tenant' => \App\Http\Middleware\ResolveTenant::class, // <— Agrega el middleware para resolver el tenant
+    ];
+
 }
