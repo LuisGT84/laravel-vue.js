@@ -10,33 +10,39 @@ use App\Http\Controllers\Api\TareaController;
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-| Todas las rutas bajo /api
+| Todas las rutas disponibles bajo /api
+| - Login queda público (no requiere token)
+| - El resto va dentro de auth:sanctum (requiere token) => 401 si no lo envían
 */
 
-// ------- Usuario autenticado (Sanctum) -------
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// ------- Auth (público) -------
+Route::post('/login', [AuthController::class, 'login']); // Devuelve token Sanctum
 
-// ------- Auth -------
-Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
-
-// ------- Usuarios -------
-Route::prefix('usuarios')->group(function () {
-    Route::get('/listUsers',        [UsuarioController::class, 'index']);
-    Route::post('/addUser',         [UsuarioController::class, 'store']);
-    Route::get('/getUser/{id}',     [UsuarioController::class, 'show']);
-    Route::put('/updateUser/{id}',  [UsuarioController::class, 'update']);
-    Route::delete('/deleteUser/{id}', [UsuarioController::class, 'destroy']);
-});
-
-// ------- Tareas (REST con export) -------
-// Importante: la ruta específica 'export' DEBE ir antes del resource para que no la capture {tarea}
+// ------- Grupo protegido por Sanctum (token requerido) -------
 Route::middleware('auth:sanctum')->group(function () {
-    // Export (CSV) – primero para evitar colisión con /tareas/{tarea}
-    Route::get('tareas/export', [TareaController::class, 'exportPendientes']);
 
-    // Resource sólo con métodos que implementaste (index y store)
+    // Usuario autenticado (útil para verificar sesión desde el front)
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+    // Cerrar sesión (revoca token)
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    // ------- CRUD de Usuarios (PROTEGIDO) -------
+    // Si alguna petición no incluye Authorization: Bearer <token>, devuelve 401
+    Route::prefix('usuarios')->group(function () {
+        Route::get('/listUsers',          [UsuarioController::class, 'index']);   // Listar
+        Route::post('/addUser',           [UsuarioController::class, 'store']);   // Crear
+        Route::get('/getUser/{id}',       [UsuarioController::class, 'show']);    // Ver uno
+        Route::put('/updateUser/{id}',    [UsuarioController::class, 'update']);  // Actualizar
+        Route::delete('/deleteUser/{id}', [UsuarioController::class, 'destroy']); // Eliminar
+    });
+
+    // ------- Tareas (PROTEGIDO) -------
+    // Exportación a Excel (ruta específica ANTES que resource para evitar colisión con /tareas/{id})
+    Route::get('tareas/export', [TareaController::class, 'exportPendientes']); // XLSX
+    // Solo index y store (los que implementaste)
     Route::apiResource('tareas', TareaController::class)->only(['index','store']);
 });
+// Nota: las rutas de Sanctum (login, logout, csrf-cookie) ya están definidas en vendor/laravel/sanctum/routesS
