@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable; // Para login con Auth
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 use App\Models\Tarea; //  modelo Tarea
 
@@ -28,9 +29,9 @@ class Usuario extends Authenticatable
     ];
 
     // Relación uno a muchos: un usuario tiene muchas tareas
-    public function tareas(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function tareas(): HasMany   // alias importado
     {
-        return $this->hasMany(\App\Models\Tarea::class, 'usuario_id');
+        return $this->hasMany(Tarea::class, 'usuario_id');
     }
 
 }
