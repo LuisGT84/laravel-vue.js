@@ -149,7 +149,7 @@ const search = ref('')
 async function cargarTareas() {
   try {
     listError.value = ''
-    // 🔁 RUTA CORRECTA (REST):
+    // RUTA CORRECTA (REST):
     const { data } = await api.get('/api/tareas')
     tareas.value = data.data ?? data
   } catch (e:any) {
@@ -206,7 +206,7 @@ async function crearTarea() {
       fecha_vencimiento: form.value.fecha_vencimiento || null,
     }
 
-    // 🔁 RUTA CORRECTA (REST):
+    // RUTA CORRECTA (REST):
     await api.post('/api/tareas', payload)
     await cargarTareas()
     form.value = { titulo: '', descripcion: '', usuario_id: null, estado: 'pendiente', fecha_vencimiento: '' }
@@ -229,16 +229,17 @@ function formatDateEs(value?: string) {
   return new Date(value).toLocaleDateString('es-GT', { year:'numeric', month:'long', day:'2-digit' })
 }
 
-/* ===== Exportar CSV ===== */
+/* ===== Exportar Excel ===== */
 async function descargarPendientes() {
   try {
-    // 🔁 RUTA CORRECTA (REST):
     const res = await api.get('/api/tareas/export', { responseType: 'blob' })
-    const blob = new Blob([res.data], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob([res.data], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-    a.download = 'tareas_pendientes.csv'
+    a.download = 'tareas_pendientes.xlsx'
     a.click()
     URL.revokeObjectURL(url)
   } catch (e:any) {

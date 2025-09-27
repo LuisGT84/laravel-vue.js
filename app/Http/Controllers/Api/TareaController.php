@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Tarea;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+//Para exportar con maatwebsite/excel
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\TareasPendientesExport;
 
 class TareaController extends Controller
 {
@@ -42,7 +45,7 @@ class TareaController extends Controller
     }
 
     /** GET /api/tareas/exportPendientes  (CSV compatible con Excel) */
-    public function exportPendientes()
+    /*public function exportPendientes()
     {
         $rows = Tarea::with(['usuario:id,nombre,email'])
             ->where('estado', 'pendiente')
@@ -71,6 +74,13 @@ class TareaController extends Controller
             fclose($out);
         };
 
-        return Response::stream($callback, 200, $headers);
+    //    
+           return Response::stream($callback, 200, $headers);
+    }*/
+           
+    /** GET /api/tareas/exportPendientes  (Excel .xlsx) */
+    public function exportPendientes()
+    {
+        return Excel::download(new TareasPendientesExport, 'tareas_pendientes.xlsx');
     }
 }
